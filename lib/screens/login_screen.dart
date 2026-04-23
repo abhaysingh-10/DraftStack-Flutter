@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context,'/register');
+                Navigator.pushReplacementNamed(context, '/register');
               },
               child: Text("Don't have an account? Register"),
             ),

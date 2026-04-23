@@ -75,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/login');
+                Navigator.pushReplacementNamed(context, '/login');
               },
               child: Text("Already have an account? Login"),
             ),
