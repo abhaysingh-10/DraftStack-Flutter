@@ -74,7 +74,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             // Text Button for redirect in Login Page
 
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
               child: Text("Already have an account? Login"),
             ),
           ],

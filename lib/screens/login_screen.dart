@@ -60,7 +60,9 @@ class _LoginScreenState extends State<LoginScreen> {
             // Register Page Redirect Text Button
 
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context,'/register');
+              },
               child: Text("Don't have an account? Register"),
             ),
           ],
