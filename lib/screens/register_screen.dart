@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/services/api_services.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -11,6 +12,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  final _apiService = ApiServices();
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +69,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final success = await _apiService.register(
+                    _usernameController.text,
+                    _emailController.text,
+                    _passwordController.text,
+                  );
+
+                  if (!mounted) return;
+
+                  if (success) {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Registration failed. Try again."),
+                      ),
+                    );
+                  }
+                },
                 child: Text("Register"),
               ),
             ),

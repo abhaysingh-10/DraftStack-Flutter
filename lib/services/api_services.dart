@@ -35,4 +35,22 @@ class ApiServices {
   }
 
   // register()fun
+
+  Future<bool> register(String username,String email,String password) async{
+    try{
+      await _dio.post(
+        'auth/register/',
+        data: {
+          'username': username,
+          'email':email,
+          'password':password,
+        },
+      );
+      return true;
+    }
+    catch(e){
+      print('Register Error: $e');
+      return false;
+    }
+  }
 }
