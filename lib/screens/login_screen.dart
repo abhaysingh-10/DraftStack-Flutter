@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/api_services.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,6 +11,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  // Api Service Object
+  final _apiService = ApiServices();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +56,21 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final success = await _apiService.login(
+                    _usernameController.text,
+                    _passwordController.text,
+                  );
+                  if (success) {
+                    Navigator.pushReplacementNamed(context, '/notes');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Invalid username or password"),
+                      ),
+                    );
+                  }
+                },
                 child: Text("Login"),
               ),
             ),
