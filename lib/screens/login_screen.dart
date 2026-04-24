@@ -61,6 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     _usernameController.text,
                     _passwordController.text,
                   );
+                  if (!mounted) return; //dont use context
+
                   if (success) {
                     Navigator.pushReplacementNamed(context, '/notes');
                   } else {

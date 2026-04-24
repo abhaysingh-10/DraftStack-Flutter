@@ -10,29 +10,28 @@ class ApiServices {
   );
 
   // Storage Instance
- final _storage = const FlutterSecureStorage();
+  final _storage = const FlutterSecureStorage();
 
   // login() fun
 
-  Future<bool> login(String username,String password) async {
-
-    try{
-      final response = await _dio.post('auth/login/',
-      data: {
-        'username' : username,
-        'password':password,
-      },
+  Future<bool> login(String username, String password) async {
+    try {
+      final response = await _dio.post(
+        'auth/login/',
+        data: {
+          'username': username,
+          'password': password,
+        },
       );
       await _storage.write(key: 'access_token', value: response.data['access']);
-      await _storage.write(key: 'refresh_token', value: response.data['refresh']);
+      await _storage.write(
+          key: 'refresh_token', value: response.data['refresh']);
 
       return true;
-      }
-    catch(e){
+    } catch (e) {
+      print('login Error: $e');
       return false;
-
     }
-
   }
 
   // register()fun

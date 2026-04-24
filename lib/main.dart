@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/screens/login_screen.dart';
+import 'package:notes_app/screens/note_screen.dart';
 import 'package:notes_app/screens/register_screen.dart';
 
 void main() {
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
+        '/notes':(context)=> NoteScreen(),
       },
     );
   }
