@@ -95,4 +95,18 @@ class ApiServices {
       return false;
     }
   }
+
+//get Notes
+  Future<Map<String, dynamic>?> getNotes({int page = 1}) async {
+    try {
+      final response = await _dio.get(
+        'notes/',
+        queryParameters: {'page': page},
+      );
+      return response.data;
+    } catch (e) {
+      print('getNotes Error: $e');
+      return null;
+    }
+  }
 }
