@@ -16,6 +16,10 @@ class _NoteScreenState extends State<NoteScreen> {
 
   bool _isLoading = true;
 
+  //Pagination
+  int _currentPage = 1;
+  bool _hasNextPage = true;
+
   @override
   void initState() {
     super.initState(); // Tells the parent class to do its setup
@@ -30,7 +34,7 @@ class _NoteScreenState extends State<NoteScreen> {
     });
 
     // 2. Call the API
-    final data = await _apiService.getNotes();
+    final data = await _apiService.getNotes(page: _currentPage);
 
     // 3. Check if we got something back
     if (data != null && data['results'] != null) {
@@ -38,7 +42,11 @@ class _NoteScreenState extends State<NoteScreen> {
       final List rawNotes = data['results'];
 
       setState(() {
-        _notes = rawNotes.map((json) => Note.fromJson(json)).toList();
+        _notes.addAll(rawNotes.map((json) => Note.fromJson(json)).toList());
+
+        //checking next page exists in django
+        _hasNextPage = data['next'] != null;
+
         _isLoading = false;
       });
     } else {
@@ -58,8 +66,25 @@ class _NoteScreenState extends State<NoteScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: _notes.length,
+              itemCount: _hasNextPage ? _notes.length + 1 : _notes.length,
               itemBuilder: (context, index) {
+                if (index == _notes.length) {
+                  return Padding(
+                    padding: EdgeInsetsGeometry.all(16),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(
+                          () {
+                            _currentPage++;
+                          },
+                        );
+                        _fetchNotes();
+                      },
+                      child: Text("Load More"),
+                    ),
+                  );
+                }
+
                 final note = _notes[index];
                 return Card(
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
