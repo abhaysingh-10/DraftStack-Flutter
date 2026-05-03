@@ -107,6 +107,19 @@ class _NoteScreenState extends State<NoteScreen> {
                   return Card(
                     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: ListTile(
+                      onTap: () {
+                        //Open the form
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NoteFormScreen(
+                              note: note,
+                            ),
+                          ),
+                        ).then(
+                          (_) => _fetchNotes(isRefresh: true),
+                        );
+                      },
                       title: Text(
                         note.title,
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -149,7 +162,6 @@ class _NoteScreenState extends State<NoteScreen> {
         },
         child: Icon(Icons.add),
       ),
-      
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/models/note_model.dart';
+import 'package:notes_app/services/api_services.dart';
 
 class NoteFormScreen extends StatefulWidget {
   final Note? note;
@@ -11,6 +12,10 @@ class NoteFormScreen extends StatefulWidget {
 }
 
 class _NoteFormState extends State<NoteFormScreen> {
+  //ApiService
+  final ApiServices _apiServices = ApiServices();
+
+  //Controller
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   List<Map<String, dynamic>> _tempSubtasks = [];
@@ -27,6 +32,7 @@ class _NoteFormState extends State<NoteFormScreen> {
       //for subtask
       _tempSubtasks = widget.note!.subtasks
           .map((s) => {
+                'id': s.id,
                 'title': s.title,
                 'completed': s.completed,
               })
@@ -47,10 +53,31 @@ class _NoteFormState extends State<NoteFormScreen> {
       );
       return;
     }
-    print("Saving Notes: $title");
-    print("With Subtasks: $_tempSubtasks");
 
-    Navigator.pop(context);
+    bool success;
+
+    if (widget.note == null) {
+      //CreateNote func
+      success = await _apiServices.createNote(title, content, _tempSubtasks);
+    } else {
+      // UpdateNote func
+      success = await _apiServices.updateNote(
+          widget.note!.id, title, content, _tempSubtasks);
+    }
+
+    if (success) {
+      if (!mounted) return;
+
+      // If it worked, go back to the list
+      Navigator.pop(context);
+    } else {
+      // If it failed, show an error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error Saving Note .Try Again."),
+        ),
+      );
+    }
   }
 
   @override
@@ -124,7 +151,8 @@ class _NoteFormState extends State<NoteFormScreen> {
                     },
                   ),
                   Expanded(
-                    child: TextField(
+                    child: TextFormField(
+                      initialValue: _tempSubtasks[i]['title'],
                       decoration: InputDecoration(hintText: "Subtask title"),
                       onChanged: (val) {
                         _tempSubtasks[i]['title'] = val;
