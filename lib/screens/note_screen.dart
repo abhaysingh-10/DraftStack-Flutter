@@ -149,6 +149,7 @@ class _NoteScreenState extends State<NoteScreen> {
         },
         child: Icon(Icons.add),
       ),
+      
     );
   }
 }
