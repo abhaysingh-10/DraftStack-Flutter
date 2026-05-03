@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/models/note_model.dart';
 import 'package:notes_app/services/api_services.dart';
+import 'package:notes_app/screens/note_form_screen.dart';
 
 class NoteScreen extends StatefulWidget {
   NoteScreen({super.key});
@@ -142,6 +143,12 @@ class _NoteScreenState extends State<NoteScreen> {
                 },
               ),
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/notesForm');
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/screens/login_screen.dart';
+import 'package:notes_app/screens/note_form_screen.dart';
 import 'package:notes_app/screens/note_screen.dart';
 import 'package:notes_app/screens/register_screen.dart';
 
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
         '/notes': (context) => NoteScreen(),
+        '/notesForm':(context)=>NoteFormScreen(),
       },
     );
   }
