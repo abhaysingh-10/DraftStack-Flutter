@@ -109,4 +109,42 @@ class ApiServices {
       return null;
     }
   }
+
+  //Create New Note
+  Future<bool> createNote(
+      String title, String content, List<Map<String, dynamic>> subtasks) async {
+    try {
+      final response = await _dio.post(
+        'notes/',
+        data: {
+          'title': title,
+          'content': content,
+          'subtasks': subtasks,
+        },
+      );
+      return response.statusCode == 201;
+    } catch (e) {
+      print('createNote Error: $e');
+      return false;
+    }
+  }
+
+  //Update Notes
+  Future<bool> updateNote(int id, String title, String content,
+      List<Map<String, dynamic>> subtasks) async {
+    try {
+      final response = await _dio.put(
+        'notes/$id/',
+        data: {
+          'title': title,
+          'content': content,
+          'subtasks': subtasks,
+        },
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print("updatedNote Error: $e");
+      return false;
+    }
+  }
 }
