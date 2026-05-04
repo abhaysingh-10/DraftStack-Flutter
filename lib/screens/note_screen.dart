@@ -4,6 +4,7 @@ import 'package:notes_app/screens/note_detail_screen.dart';
 import 'package:notes_app/services/api_services.dart';
 import 'package:notes_app/screens/note_form_screen.dart';
 import 'package:notes_app/screens/note_detail_screen.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class NoteScreen extends StatefulWidget {
   NoteScreen({super.key});
@@ -106,47 +107,69 @@ class _NoteScreenState extends State<NoteScreen> {
                   }
 
                   final note = _notes[index];
-                  return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NoteDetailScreen(note: note),
-                          ),
-                        ).then((_) => _fetchNotes(isRefresh: true));
-                      },
-                      title: Text(
-                        note.title,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                  return Slidable(
+                    key: ValueKey(note.id),
+                    startActionPane:
+                        ActionPane(motion: DrawerMotion(), children: [
+                      SlidableAction(
+                        onPressed: (context) {
+                          // Navigate to Edit Screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NoteFormScreen(note: note),
+                            ),
+                          ).then((_) => _fetchNotes(isRefresh: true));
+                        },
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        icon: Icons.edit,
+                        label: 'Edit',
                       ),
-                      subtitle: Text(
-                        note.content,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            // Ternary Operator
-                            note.subtasks.isNotEmpty &&
-                                    note.subtasks.every((s) => s.completed)
-                                ? Icons.check_circle // If Yes Filled icon
-                                : Icons
-                                    .radio_button_unchecked, // if No Outline icon
+                    ]),
+                    child: Card(
+                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  NoteDetailScreen(note: note),
+                            ),
+                          ).then((_) => _fetchNotes(isRefresh: true));
+                        },
+                        title: Text(
+                          note.title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          note.content,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              // Ternary Operator
+                              note.subtasks.isNotEmpty &&
+                                      note.subtasks.every((s) => s.completed)
+                                  ? Icons.check_circle // If Yes Filled icon
+                                  : Icons
+                                      .radio_button_unchecked, // if No Outline icon
 
-                            // Color condition
-                            color: note.subtasks.isNotEmpty &&
-                                    note.subtasks.every((s) => s.completed)
-                                ? Colors.green
-                                : Colors.grey,
-                            size: 18,
-                          ),
-                          Text(
-                              "${note.subtasks.where((s) => s.completed).length}/${note.subtasks.length}"),
-                        ],
+                              // Color condition
+                              color: note.subtasks.isNotEmpty &&
+                                      note.subtasks.every((s) => s.completed)
+                                  ? Colors.green
+                                  : Colors.grey,
+                              size: 18,
+                            ),
+                            Text(
+                                "${note.subtasks.where((s) => s.completed).length}/${note.subtasks.length}"),
+                          ],
+                        ),
                       ),
                     ),
                   );
