@@ -144,21 +144,49 @@ class _NoteScreenState extends State<NoteScreen> {
                           children: [
                             SlidableAction(
                               onPressed: (context) async {
-                                //1. Calling the api for delete
-                                final success =
-                                    await _apiService.deleteNote(note.id);
+                                //1. Show the dialog and wait for the result
+                                final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                          title: Text("Delete Note"),
+                                          content: Text(
+                                              "This action cannot be undone."),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(
+                                                  context,
+                                                  false), // Returns false
+                                              child: const Text("Cancel"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(
+                                                  context,
+                                                  true), // Returns true
+                                              child: const Text("Delete",
+                                                  style: TextStyle(
+                                                      color: Colors.red)),
+                                            ),
+                                          ],
+                                        ));
 
-                                if (success) {
-                                  // 2.Refresh the list
-                                  _fetchNotes(isRefresh: true);
-                                } else {
-                                  //3. Show error if failed
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text("Failed to delete note"),
-                                      ),
-                                    );
+                                //2. Only call API if confirm is True
+                                if (confirm == true) {
+                                  final success =
+                                      await _apiService.deleteNote(note.id);
+                                  if (success) {
+                                    // 2.Refresh the list
+                                    _fetchNotes(isRefresh: true);
+                                  } else {
+                                    //3. Show error if failed
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              Text("Failed to delete note"),
+                                        ),
+                                      );
+                                    }
                                   }
                                 }
                               },
