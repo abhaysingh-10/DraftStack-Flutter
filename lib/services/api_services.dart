@@ -2,15 +2,23 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiServices {
+  // Storage Instance
+  final _storage = const FlutterSecureStorage();
+
+  //helper function for token checking
+
+  Future<bool> hasToken() async {
+    String? token = await _storage.read(key: 'access_token');
+    
+    return token != null;
+  }
+
   // Dio Instance
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: 'http://127.0.0.1:8000/api/',
     ),
   );
-
-  // Storage Instance
-  final _storage = const FlutterSecureStorage();
 
   //Constructor Interceptor
   ApiServices() {
