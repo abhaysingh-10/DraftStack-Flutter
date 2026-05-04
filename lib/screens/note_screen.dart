@@ -86,132 +86,141 @@ class _NoteScreenState extends State<NoteScreen> {
           ? Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: () => _fetchNotes(isRefresh: true),
-              child: ListView.builder(
-                itemCount: _hasNextPage ? _notes.length + 1 : _notes.length,
-                itemBuilder: (context, index) {
-                  if (index == _notes.length) {
+              child: SlidableAutoCloseBehavior(
+                closeWhenOpened: true,
+                child: ListView.builder(
+                  itemCount: _hasNextPage ? _notes.length + 1 : _notes.length,
+                  itemBuilder: (context, index) {
+                    if (index == _notes.length) {
+                      return Padding(
+                        padding: EdgeInsetsGeometry.all(16),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(
+                              () {
+                                _currentPage++;
+                              },
+                            );
+                            _fetchNotes();
+                          },
+                          child: Text("Load More"),
+                        ),
+                      );
+                    }
+
+                    final note = _notes[index];
                     return Padding(
-                      padding: EdgeInsetsGeometry.all(16),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(
-                            () {
-                              _currentPage++;
-                            },
-                          );
-                          _fetchNotes();
-                        },
-                        child: Text("Load More"),
-                      ),
-                    );
-                  }
-
-                  final note = _notes[index];
-                  return Slidable(
-                    // SWIPE LEFT to RIGHT for edit
-                    key: ValueKey(note.id),
-                    startActionPane: ActionPane(
-                      motion: BehindMotion(),
-                      extentRatio: 0.25,
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) {
-                            // Navigate to Edit Screen
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    NoteFormScreen(note: note),
-                              ),
-                            ).then((_) => _fetchNotes(isRefresh: true));
-                          },
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          icon: Icons.edit,
-                          label: 'Edit',
-                        ),
-                      ],
-                    ),
-                    //SWIPE RIGHT to LEFT for delete
-                    endActionPane: ActionPane(
-                      motion: BehindMotion(),
-                      extentRatio: 0.25,
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) async {
-                            //1. Calling the api for delete
-                            final success =
-                                await _apiService.deleteNote(note.id);
-
-                            if (success) {
-                              // 2.Refresh the list
-                              _fetchNotes(isRefresh: true);
-                            } else {
-                              //3. Show error if failed
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Failed to delete note"),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          backgroundColor:
-                              const Color.fromARGB(255, 197, 27, 14),
-                          foregroundColor: Colors.white,
-                          icon: Icons.delete,
-                          label: 'Delete',
-                        ),
-                      ],
-                    ),
-                    child: Card(
-                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: ListTile(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  NoteDetailScreen(note: note),
-                            ),
-                          ).then((_) => _fetchNotes(isRefresh: true));
-                        },
-                        title: Text(
-                          note.title,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          note.content,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Slidable(
+                        // SWIPE LEFT to RIGHT for edit
+                        key: ValueKey(note.id),
+                        startActionPane: ActionPane(
+                          motion: StretchMotion(),
+                          extentRatio: 0.25,
                           children: [
-                            Icon(
-                              // Ternary Operator
-                              note.subtasks.isNotEmpty &&
-                                      note.subtasks.every((s) => s.completed)
-                                  ? Icons.check_circle // If Yes Filled icon
-                                  : Icons
-                                      .radio_button_unchecked, // if No Outline icon
-
-                              // Color condition
-                              color: note.subtasks.isNotEmpty &&
-                                      note.subtasks.every((s) => s.completed)
-                                  ? Colors.green
-                                  : Colors.grey,
-                              size: 18,
+                            SlidableAction(
+                              onPressed: (context) {
+                                // Navigate to Edit Screen
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        NoteFormScreen(note: note),
+                                  ),
+                                ).then((_) => _fetchNotes(isRefresh: true));
+                              },
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              icon: Icons.edit,
+                              label: 'Edit',
                             ),
-                            Text(
-                                "${note.subtasks.where((s) => s.completed).length}/${note.subtasks.length}"),
                           ],
                         ),
+                        //SWIPE RIGHT to LEFT for delete
+                        endActionPane: ActionPane(
+                          motion: StretchMotion(),
+                          extentRatio: 0.25,
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) async {
+                                //1. Calling the api for delete
+                                final success =
+                                    await _apiService.deleteNote(note.id);
+
+                                if (success) {
+                                  // 2.Refresh the list
+                                  _fetchNotes(isRefresh: true);
+                                } else {
+                                  //3. Show error if failed
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Failed to delete note"),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              backgroundColor:
+                                  const Color.fromARGB(255, 197, 27, 14),
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ],
+                        ),
+                        child: Card(
+                          child: ListTile(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      NoteDetailScreen(note: note),
+                                ),
+                              ).then((_) => _fetchNotes(isRefresh: true));
+                            },
+                            title: Text(
+                              note.title,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              note.content,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  // Ternary Operator
+                                  note.subtasks.isNotEmpty &&
+                                          note.subtasks
+                                              .every((s) => s.completed)
+                                      ? Icons.check_circle // If Yes Filled icon
+                                      : Icons
+                                          .radio_button_unchecked, // if No Outline icon
+
+                                  // Color condition
+                                  color: note.subtasks.isNotEmpty &&
+                                          note.subtasks
+                                              .every((s) => s.completed)
+                                      ? Colors.green
+                                      : Colors.grey,
+                                  size: 18,
+                                ),
+                                Text(
+                                    "${note.subtasks.where((s) => s.completed).length}/${note.subtasks.length}"),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
       floatingActionButton: FloatingActionButton(
