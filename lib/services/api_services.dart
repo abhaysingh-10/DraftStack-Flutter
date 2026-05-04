@@ -166,5 +166,15 @@ class ApiServices {
     }
   }
 
-  
+  //Delete Note
+
+  Future<bool> deleteNote(int id) async {
+    try {
+      final response = await _dio.delete('notes/$id/');
+      return response.statusCode == 204; //204 No Content
+    } catch (e) {
+      print("deleted: Note Error: $e ");
+      return false;
+    }
+  }
 }

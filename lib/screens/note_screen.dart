@@ -108,25 +108,63 @@ class _NoteScreenState extends State<NoteScreen> {
 
                   final note = _notes[index];
                   return Slidable(
+                    // SWIPE LEFT to RIGHT for edit
                     key: ValueKey(note.id),
-                    startActionPane:
-                        ActionPane(motion: DrawerMotion(), children: [
-                      SlidableAction(
-                        onPressed: (context) {
-                          // Navigate to Edit Screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NoteFormScreen(note: note),
-                            ),
-                          ).then((_) => _fetchNotes(isRefresh: true));
-                        },
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        icon: Icons.edit,
-                        label: 'Edit',
-                      ),
-                    ]),
+                    startActionPane: ActionPane(
+                      motion: BehindMotion(),
+                      extentRatio: 0.25,
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) {
+                            // Navigate to Edit Screen
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    NoteFormScreen(note: note),
+                              ),
+                            ).then((_) => _fetchNotes(isRefresh: true));
+                          },
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          icon: Icons.edit,
+                          label: 'Edit',
+                        ),
+                      ],
+                    ),
+                    //SWIPE RIGHT to LEFT for delete
+                    endActionPane: ActionPane(
+                      motion: BehindMotion(),
+                      extentRatio: 0.25,
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) async {
+                            //1. Calling the api for delete
+                            final success =
+                                await _apiService.deleteNote(note.id);
+
+                            if (success) {
+                              // 2.Refresh the list
+                              _fetchNotes(isRefresh: true);
+                            } else {
+                              //3. Show error if failed
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Failed to delete note"),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          backgroundColor:
+                              const Color.fromARGB(255, 197, 27, 14),
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: 'Delete',
+                        ),
+                      ],
+                    ),
                     child: Card(
                       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: ListTile(
