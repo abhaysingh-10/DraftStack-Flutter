@@ -9,7 +9,7 @@ class ApiServices {
 
   Future<bool> hasToken() async {
     String? token = await _storage.read(key: 'access_token');
-    
+
     return token != null;
   }
 
@@ -184,5 +184,11 @@ class ApiServices {
       print("deleted: Note Error: $e ");
       return false;
     }
+  }
+
+  //logout Function
+
+  Future<void> logout() async {
+    await _storage.deleteAll();
   }
 }

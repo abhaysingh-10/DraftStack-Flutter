@@ -80,6 +80,24 @@ class _NoteScreenState extends State<NoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () async {
+              // 1. Clear Token
+              await _apiService.logout();
+
+              //2. Go back to login and CLEAR the navigation history
+              if (mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/login',
+                  (route) => false,
+                );
+              }
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
         title: Text("My Notes"),
       ),
       body: _isLoading
