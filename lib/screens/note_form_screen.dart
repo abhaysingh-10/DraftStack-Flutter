@@ -47,22 +47,22 @@ class _NoteFormState extends State<NoteFormScreen> {
 
     if (title.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Please add a Title"),
-        ),
+        const SnackBar(content: Text("Please add a Title")),
       );
       return;
     }
 
+    final cleanedSubtasks = _tempSubtasks.where((subtask) {
+      return subtask['title'].toString().trim().isNotEmpty;
+    }).toList();
+
     bool success;
 
     if (widget.note == null) {
-      //CreateNote func
-      success = await _apiServices.createNote(title, content, _tempSubtasks);
+      success = await _apiServices.createNote(title, content, cleanedSubtasks);
     } else {
-      // UpdateNote func
       success = await _apiServices.updateNote(
-          widget.note!.id, title, content, _tempSubtasks);
+          widget.note!.id, title, content, cleanedSubtasks);
     }
 
     if (success) {
@@ -152,8 +152,11 @@ class _NoteFormState extends State<NoteFormScreen> {
                   ),
                   Expanded(
                     child: TextFormField(
+                      onChanged: (value) {
+                        _tempSubtasks[i]['title'] = value;
+                      },
                       initialValue: _tempSubtasks[i]['title'],
-                         ),
+                    ),
                   ),
                   IconButton(
                     onPressed: () {

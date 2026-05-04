@@ -147,4 +147,22 @@ class ApiServices {
       return false;
     }
   }
+
+  // Toggle Subtask Completion
+
+  Future<bool> toggleSubtask(
+      int noteId, List<Map<String, dynamic>> allSubtasks) async {
+    try {
+      final response = await _dio.patch(
+        'notes/$noteId/',
+        data: {
+          'subtasks': allSubtasks,
+        },
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print('toggleSubtask Error: $e');
+      return false;
+    }
+  }
 }
