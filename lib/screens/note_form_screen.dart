@@ -142,13 +142,16 @@ class _NoteFormState extends State<NoteFormScreen> {
             for (int i = 0; i < _tempSubtasks.length; i++)
               Row(
                 children: [
-                  Checkbox(
-                    value: _tempSubtasks[i]['completed'],
-                    onChanged: (val) {
-                      setState(() {
-                        _tempSubtasks[i]['completed'] = val;
-                      });
-                    },
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      "${i + 1}",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
                   ),
                   Expanded(
                     child: TextFormField(
