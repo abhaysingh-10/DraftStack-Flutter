@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/models/note_model.dart';
+import 'package:notes_app/screens/note_detail_Screen.dart';
 import 'package:notes_app/services/api_services.dart';
 import 'package:notes_app/screens/note_form_screen.dart';
+import 'package:notes_app/screens/note_detail_screen.dart';
 
 class NoteScreen extends StatefulWidget {
   NoteScreen({super.key});
@@ -108,17 +110,12 @@ class _NoteScreenState extends State<NoteScreen> {
                     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: ListTile(
                       onTap: () {
-                        //Open the form
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NoteFormScreen(
-                              note: note,
-                            ),
+                            builder: (context) => NoteDetailScreen(note: note),
                           ),
-                        ).then(
-                          (_) => _fetchNotes(isRefresh: true),
-                        );
+                        ).then((_) => _fetchNotes(isRefresh: true));
                       },
                       title: Text(
                         note.title,

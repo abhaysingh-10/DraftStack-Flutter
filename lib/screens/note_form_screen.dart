@@ -153,11 +153,7 @@ class _NoteFormState extends State<NoteFormScreen> {
                   Expanded(
                     child: TextFormField(
                       initialValue: _tempSubtasks[i]['title'],
-                      decoration: InputDecoration(hintText: "Subtask title"),
-                      onChanged: (val) {
-                        _tempSubtasks[i]['title'] = val;
-                      },
-                    ),
+                         ),
                   ),
                   IconButton(
                     onPressed: () {

@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
         '/notes': (context) => NoteScreen(),
-        '/notesForm':(context)=>NoteFormScreen(),
+        '/notesForm': (context) => NoteFormScreen(),
       },
     );
   }
