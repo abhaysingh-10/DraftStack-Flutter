@@ -15,26 +15,36 @@ void main() async {
   runApp(MyApp(isloggedIn: isloggedIn));
 }
 
+//Dark Mode  (Riverpod State Management )
+
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
+
 class MyApp extends StatelessWidget {
   final bool isloggedIn;
   const MyApp({super.key, required this.isloggedIn});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Notes App",
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      initialRoute: isloggedIn ? '/notes' : '/login',
-      routes: {
-        '/login': (context) => LoginScreen(),
-        '/register': (context) => RegisterScreen(),
-        '/notes': (context) => NoteScreen(),
-        '/notesForm': (context) => NoteFormScreen(),
-      },
-    );
+    return ValueListenableBuilder<ThemeMode>(
+        valueListenable: themeNotifier,
+        builder: (_, mode, __) {
+          return MaterialApp(
+            title: "Notes App",
+            themeMode: mode,
+            darkTheme: ThemeData.dark(useMaterial3: true),
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            initialRoute: isloggedIn ? '/notes' : '/login',
+            routes: {
+              '/login': (context) => LoginScreen(),
+              '/register': (context) => RegisterScreen(),
+              '/notes': (context) => NoteScreen(),
+              '/notesForm': (context) => NoteFormScreen(),
+            },
+          );
+        });
   }
 }

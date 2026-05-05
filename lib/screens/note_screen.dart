@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/main.dart';
 import 'package:notes_app/models/note_model.dart';
 import 'package:notes_app/screens/note_detail_screen.dart';
 import 'package:notes_app/services/api_services.dart';
@@ -141,91 +142,102 @@ class _NoteScreenState extends State<NoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          actions: [
-            //popup Menu Button
-            PopupMenuButton<String>(
-                icon: Icon(Icons.sort, color: Colors.white),
-                onSelected: (String value) {
-                  setState(() {
-                    _sortBy = value;
-                  });
-                  _sortNotes();
-                },
-                itemBuilder: (Context) => [
-                      PopupMenuItem(
-                        child: Text("Newest First"),
-                        value: "date",
-                      ),
-                      PopupMenuItem(
-                        child: Text("Alphabatical (A-Z)"),
-                        value: "alphabetical",
-                      ),
-                    ]),
-            IconButton(
-              onPressed: () async {
-                // 1. Clear Token
-                await _apiService.logout();
-
-                //2. Go back to login and CLEAR the navigation history
-                if (mounted) {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/login',
-                    (route) => false,
-                  );
-                }
-              },
-              icon: Icon(
-                Icons.logout,
-                color: Colors.white,
-              ),
+        actions: [
+          // Dark Mode
+          IconButton(
+            onPressed: () {
+              themeNotifier.value = themeNotifier.value == ThemeMode.light
+                  ? ThemeMode.dark
+                  : ThemeMode.light;
+            },
+            icon: Icon(
+              themeNotifier.value == ThemeMode.light
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
             ),
-          ],
-          title: TextField(
-              controller: _searchController,
-              style: TextStyle(color: Colors.white),
-              cursorColor: Colors.white,
-              decoration: InputDecoration(
-                hintText: "Search Notes",
-                hintStyle: TextStyle(color: Colors.white),
-                border: InputBorder.none,
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: Icon(
-                          Icons.clear,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _searchQuery = "";
-                          });
-                          _fetchNotes(isRefresh: true);
-                        },
-                      )
-                    : Icon(
-                        Icons.search,
-                        color: Colors.white,
-                      ),
+          ),
+
+          //popup Menu Button
+          PopupMenuButton<String>(
+              icon: Icon(
+                Icons.sort,
               ),
-              onChanged: (value) {
+              onSelected: (String value) {
                 setState(() {
-                  _searchQuery = value;
+                  _sortBy = value;
                 });
-                if (_debounce?.isActive ?? false) _debounce!.cancel();
+                _sortNotes();
+              },
+              itemBuilder: (Context) => [
+                    PopupMenuItem(
+                      child: Text("Newest First"),
+                      value: "date",
+                    ),
+                    PopupMenuItem(
+                      child: Text("Alphabatical (A-Z)"),
+                      value: "alphabetical",
+                    ),
+                  ]),
+          IconButton(
+            onPressed: () async {
+              // 1. Clear Token
+              await _apiService.logout();
 
-                //Throttling Issue Condition
+              //2. Go back to login and CLEAR the navigation history
+              if (mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/login',
+                  (route) => false,
+                );
+              }
+            },
+            icon: Icon(
+              Icons.logout,
+            ),
+          ),
+        ],
+        title: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: "Search Notes",
+              hintStyle: TextStyle(),
+              border: InputBorder.none,
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.clear,
+                      ),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          _searchQuery = "";
+                        });
+                        _fetchNotes(isRefresh: true);
+                      },
+                    )
+                  : Icon(
+                      Icons.search,
+                    ),
+            ),
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+              if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-                if (value.isEmpty || value.length >= 3) {
-                  // Start a new 500ms timer
-                  _debounce = Timer(Duration(milliseconds: 800), () {
-                    _fetchNotes(isRefresh: true);
-                  });
-                }
+              //Throttling Issue Condition
 
-                ;
-              }),
-          backgroundColor: Theme.of(context).colorScheme.primary),
+              if (value.isEmpty || value.length >= 3) {
+                // Start a new 500ms timer
+                _debounce = Timer(Duration(milliseconds: 800), () {
+                  _fetchNotes(isRefresh: true);
+                });
+              }
+
+              ;
+            }),
+      ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _notes.isEmpty
