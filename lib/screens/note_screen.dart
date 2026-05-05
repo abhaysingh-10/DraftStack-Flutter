@@ -48,6 +48,24 @@ class _NoteScreenState extends State<NoteScreen> {
 
   final ApiServices _apiService = ApiServices();
 
+  //Sorting
+  String _sortBy = "date";
+
+  // Helper Function
+  void _sortNotes() {
+    setState(() {
+      if (_sortBy == "alphabetical") {
+        _notes.sort(
+          (a, b) => a.title.toLowerCase().compareTo(
+                b.title.toLowerCase(),
+              ),
+        );
+      } else {
+        _notes.sort((a, b) => b.id.compareTo(a.id));
+      }
+    });
+  }
+
   //searching
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
@@ -107,8 +125,9 @@ class _NoteScreenState extends State<NoteScreen> {
 
         //checking next page exists in django
         _hasNextPage = data['next'] != null;
-
         _isLoading = false;
+
+        _sortNotes();
       });
     } else {
       // Handle Error
@@ -123,6 +142,25 @@ class _NoteScreenState extends State<NoteScreen> {
     return Scaffold(
       appBar: AppBar(
           actions: [
+            //popup Menu Button
+            PopupMenuButton<String>(
+                icon: Icon(Icons.sort, color: Colors.white),
+                onSelected: (String value) {
+                  setState(() {
+                    _sortBy = value;
+                  });
+                  _sortNotes();
+                },
+                itemBuilder: (Context) => [
+                      PopupMenuItem(
+                        child: Text("Newest First"),
+                        value: "date",
+                      ),
+                      PopupMenuItem(
+                        child: Text("Alphabatical (A-Z)"),
+                        value: "alphabetical",
+                      ),
+                    ]),
             IconButton(
               onPressed: () async {
                 // 1. Clear Token
