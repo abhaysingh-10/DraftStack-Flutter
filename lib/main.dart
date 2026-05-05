@@ -15,7 +15,7 @@ void main() async {
   runApp(MyApp(isloggedIn: isloggedIn));
 }
 
-//Dark Mode  (Riverpod State Management )
+//Dark Mode  By using buildin Notifier
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
