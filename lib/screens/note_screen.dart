@@ -145,10 +145,16 @@ class _NoteScreenState extends State<NoteScreen> {
                 });
                 if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-                // Start a new 500ms timer
-                _debounce = Timer(Duration(milliseconds: 500), () {
-                  _fetchNotes(isRefresh: true);
-                });
+                //Throttling Issue Condition
+
+                if (value.isEmpty || value.length >= 3) {
+                  // Start a new 500ms timer
+                  _debounce = Timer(Duration(milliseconds: 800), () {
+                    _fetchNotes(isRefresh: true);
+                  });
+                }
+
+                ;
               }),
           backgroundColor: Theme.of(context).colorScheme.primary),
       body: _isLoading
