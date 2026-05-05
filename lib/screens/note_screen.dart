@@ -4,7 +4,6 @@ import 'package:notes_app/models/note_model.dart';
 import 'package:notes_app/screens/note_detail_screen.dart';
 import 'package:notes_app/services/api_services.dart';
 import 'package:notes_app/screens/note_form_screen.dart';
-import 'package:notes_app/screens/note_detail_screen.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:async';
 
