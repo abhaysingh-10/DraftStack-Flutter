@@ -105,11 +105,15 @@ class ApiServices {
   }
 
 //get Notes
-  Future<Map<String, dynamic>?> getNotes({int page = 1}) async {
+  Future<Map<String, dynamic>?> getNotes(
+      {int page = 1, String search = ''}) async {
     try {
       final response = await _dio.get(
         'notes/',
-        queryParameters: {'page': page},
+        queryParameters: {
+          'page': page,
+          if (search.isNotEmpty) 'search': search,
+        },
       );
       return response.data;
     } catch (e) {

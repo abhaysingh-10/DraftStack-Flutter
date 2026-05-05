@@ -5,6 +5,7 @@ import 'package:notes_app/services/api_services.dart';
 import 'package:notes_app/screens/note_form_screen.dart';
 import 'package:notes_app/screens/note_detail_screen.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'dart:async';
 
 class NoteScreen extends StatefulWidget {
   NoteScreen({super.key});
@@ -15,6 +16,13 @@ class NoteScreen extends StatefulWidget {
 
 class _NoteScreenState extends State<NoteScreen> {
   final ApiServices _apiService = ApiServices();
+
+  //searching
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = "";
+
+  //debounce
+  Timer? _debounce;
 
   List<Note> _notes = [];
 
@@ -45,7 +53,10 @@ class _NoteScreenState extends State<NoteScreen> {
     });
 
     // 2. Call the API
-    final data = await _apiService.getNotes(page: _currentPage);
+    final data = await _apiService.getNotes(
+      page: _currentPage,
+      search: _searchQuery,
+    );
 
     // 3. Check if we got something back
     if (data != null && data['results'] != null) {
@@ -80,26 +91,66 @@ class _NoteScreenState extends State<NoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () async {
-              // 1. Clear Token
-              await _apiService.logout();
+          actions: [
+            IconButton(
+              onPressed: () async {
+                // 1. Clear Token
+                await _apiService.logout();
 
-              //2. Go back to login and CLEAR the navigation history
-              if (mounted) {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/login',
-                  (route) => false,
-                );
-              }
-            },
-            icon: Icon(Icons.logout),
-          ),
-        ],
-        title: Text("My Notes"),
-      ),
+                //2. Go back to login and CLEAR the navigation history
+                if (mounted) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login',
+                    (route) => false,
+                  );
+                }
+              },
+              icon: Icon(
+                Icons.logout,
+                color: Colors.white,
+              ),
+            ),
+          ],
+          title: TextField(
+              controller: _searchController,
+              style: TextStyle(color: Colors.white),
+              cursorColor: Colors.white,
+              decoration: InputDecoration(
+                hintText: "Search Notes",
+                hintStyle: TextStyle(color: Colors.white),
+                border: InputBorder.none,
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.clear,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = "";
+                          });
+                          _fetchNotes(isRefresh: true);
+                        },
+                      )
+                    : Icon(
+                        Icons.search,
+                        color: Colors.white,
+                      ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+                if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+                // Start a new 500ms timer
+                _debounce = Timer(Duration(milliseconds: 500), () {
+                  _fetchNotes(isRefresh: true);
+                });
+              }),
+          backgroundColor: Theme.of(context).colorScheme.primary),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : RefreshIndicator(
