@@ -1,48 +1,54 @@
-# Draft Stack — Flutter Frontend
+# 📝 Notes App — Flutter Frontend
 
-Built this while learning Flutter and state management.
-
----
-
-## What I Built
-
-A mobile notes app connected to my Django REST Framework backend.
-Handles login, register, full CRUD for notes with subtasks, debounced search, and dark mode.
+The mobile client for the Notes App, built with Flutter. Connects to the Django DRF backend for a full-stack note-taking experience.
 
 ---
 
-## Stack
+## 🛠 What I Built
+A clean, responsive mobile app where users can:
+- Register and Login (JWT Auth)
+- Create, view, edit and delete notes
+- Add and manage subtasks within notes
+- Search and paginate through their notes
 
-- Flutter
-- flutter_secure_storage (JWT Storage)
-- http (API Integration)
-
----
-
-## Where I Struggled
-
-- Debugging secure storage persistence on a real iPhone 16e
-- Building a debounced search that doesn't spam the API on every keystroke
-- Managing form state for notes that have nested subtasks inside them
-- Handling loading, success, and error states cleanly across screens
+> Each user can only access their own data, handled securely via the backend.
 
 ---
 
-## What I Learned
-
-- Flutter widget lifecycle and how to structure a real app
-- How to store JWT tokens securely and inject them into every API request
-- How to manage UI state using setState across multiple screens
-- How to connect a Flutter app to a backend I built myself from scratch
-
----
-
-## Next Steps
-
-- Migrate state management to Riverpod
-- Add offline caching for notes
-- Improve UI polish and animations
+## 🏗 Stack
+- **Flutter** — Cross-platform mobile framework
+- **Dart** — Primary language
+- **HTTP / Dio** — For communicating with the DRF backend
+- **SharedPreferences** — For storing JWT tokens locally
 
 ---
 
-Built by Abhay Singh
+## 🚀 Getting Started
+
+```bash
+git clone [your-repo-link]
+cd notes-app-flutter
+flutter pub get
+flutter run
+```
+
+> Make sure the Django backend is running at `http://127.0.0.1:8000/` before launching the app.
+
+---
+
+## 🧠 Where I Struggled
+- Managing JWT tokens and handling token refresh on the client side
+- Syncing state across screens after create/edit/delete actions
+- Understanding how to structure API calls cleanly in Flutter
+
+---
+
+## 🎓 What I Learned
+- How to consume a REST API from a Flutter app
+- JWT authentication flow on the frontend (storing, sending and refreshing tokens)
+- State management and navigation between screens
+- Connecting a Flutter frontend to a Django backend end-to-end
+
+---
+
+Built by **Abhay Singh**
