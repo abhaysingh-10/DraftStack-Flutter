@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_app/screens/login_screen.dart';
 import 'package:notes_app/screens/note_form_screen.dart';
 import 'package:notes_app/screens/note_screen.dart';
@@ -12,7 +13,11 @@ void main() async {
   final apiServices = ApiServices();
   final bool isloggedIn = await apiServices.hasToken();
 
-  runApp(MyApp(isloggedIn: isloggedIn));
+  runApp(
+     ProviderScope(
+      child: MyApp(isloggedIn: isloggedIn),
+    ),
+  );
 }
 
 //Dark Mode  By using buildin Notifier
