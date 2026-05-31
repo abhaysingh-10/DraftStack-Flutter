@@ -24,12 +24,12 @@ void main() async {
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   final bool isloggedIn;
   const MyApp({super.key, required this.isloggedIn});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ValueListenableBuilder<ThemeMode>(
         valueListenable: themeNotifier,
         builder: (_, mode, __) {

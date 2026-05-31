@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_app/main.dart';
 import 'package:notes_app/models/note_model.dart';
 import 'package:notes_app/screens/note_detail_screen.dart';
@@ -7,14 +8,14 @@ import 'package:notes_app/screens/note_form_screen.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:async';
 
-class NoteScreen extends StatefulWidget {
+class NoteScreen extends ConsumerStatefulWidget {
   NoteScreen({super.key});
 
   @override
-  State<NoteScreen> createState() => _NoteScreenState();
+  ConsumerState<NoteScreen> createState() => _NoteScreenState();
 }
 
-class _NoteScreenState extends State<NoteScreen> {
+class _NoteScreenState extends ConsumerState<NoteScreen> {
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -45,8 +46,6 @@ class _NoteScreenState extends State<NoteScreen> {
       ),
     );
   }
-
-  final ApiServices _apiService = ApiServices();
 
   //Sorting
   String _sortBy = "date";
@@ -102,10 +101,10 @@ class _NoteScreenState extends State<NoteScreen> {
     });
 
     // 2. Call the API
-    final data = await _apiService.getNotes(
-      page: _currentPage,
-      search: _searchQuery,
-    );
+    final data = await ref.read(apiServiceProvider).getNotes(
+          page: _currentPage,
+          search: _searchQuery,
+        );
 
     // 3. Check if we got something back
     if (data != null && data['results'] != null) {
@@ -180,7 +179,7 @@ class _NoteScreenState extends State<NoteScreen> {
           IconButton(
             onPressed: () async {
               // 1. Clear Token
-              await _apiService.logout();
+              await ref.read(apiServiceProvider).logout();
 
               //2. Go back to login and CLEAR the navigation history
               if (mounted) {
@@ -329,8 +328,9 @@ class _NoteScreenState extends State<NoteScreen> {
 
                                     //2. Only call API if confirm is True
                                     if (confirm == true) {
-                                      final success =
-                                          await _apiService.deleteNote(note.id);
+                                      final success = await ref
+                                          .read(apiServiceProvider)
+                                          .deleteNote(note.id);
                                       if (success) {
                                         // 2.Refresh the list
                                         _fetchNotes(isRefresh: true);

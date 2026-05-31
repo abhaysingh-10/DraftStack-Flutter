@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/api_services.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  // Api Service Object
-  final _apiService = ApiServices();
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +55,11 @@ class _LoginScreenState extends State<LoginScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  final success = await _apiService.login(
-                    _usernameController.text,
-                    _passwordController.text,
-                  );
+                  final success = await ref.read(apiServiceProvider).login(
+                        _usernameController.text,
+                        _passwordController.text,
+                      );
+
                   if (!mounted) return; //dont use context
 
                   if (success) {

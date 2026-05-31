@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 //Provider SM
 
-final _apiServiceProvider = Provider<ApiServices>((ref){
+final apiServiceProvider = Provider<ApiServices>((ref){
 
   return ApiServices();
 
