@@ -138,18 +138,18 @@ class _NoteScreenState extends ConsumerState<NoteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = ref.watch(themeProvider);
     return Scaffold(
       appBar: AppBar(
         actions: [
           // Dark Mode
           IconButton(
             onPressed: () {
-              themeNotifier.value = themeNotifier.value == ThemeMode.light
-                  ? ThemeMode.dark
-                  : ThemeMode.light;
+             ref.read(themeProvider.notifier).state 
+             =currentTheme == ThemeMode.light ? ThemeMode.dark:ThemeMode.light;
             },
             icon: Icon(
-              themeNotifier.value == ThemeMode.light
+             currentTheme == ThemeMode.light
                   ? Icons.dark_mode
                   : Icons.light_mode,
             ),
