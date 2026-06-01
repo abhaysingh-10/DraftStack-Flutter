@@ -8,6 +8,16 @@ final apiServiceProvider = Provider<ApiServices>((ref){
 
   return ApiServices();
 
+
+});
+
+// Future Provider
+
+final notesProvider = FutureProvider<Map<String, dynamic>?>((ref) async{
+  
+  final ApiService = ref.watch(apiServiceProvider);
+
+  return ApiService.getNotes();
 });
 
 class ApiServices {
