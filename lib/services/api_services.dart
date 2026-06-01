@@ -1,23 +1,23 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 //Provider SM
 
-final apiServiceProvider = Provider<ApiServices>((ref){
-
+final apiServiceProvider = Provider<ApiServices>((ref) {
   return ApiServices();
-
-
 });
 
 // Future Provider
 
-final notesProvider = FutureProvider<Map<String, dynamic>?>((ref) async{
-  
-  final ApiService = ref.watch(apiServiceProvider);
+final searchProvider = StateProvider<String>((ref) => "");
 
-  return ApiService.getNotes();
+final notesProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
+  final apiService = ref.watch(apiServiceProvider);
+  final search = ref.watch(searchProvider);
+
+  return apiService.getNotes(search: search);
 });
 
 class ApiServices {
