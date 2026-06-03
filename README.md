@@ -12,7 +12,7 @@ A clean, responsive mobile app where users can:
 
 > Each user can only access their own data, handled securely via the backend.
 
----
+
 
 ##  Stack
 - **Flutter** — Cross-platform mobile framework
@@ -20,7 +20,7 @@ A clean, responsive mobile app where users can:
 - **HTTP / Dio** — For communicating with the DRF backend
 - **SharedPreferences** — For storing JWT tokens locally
 
----
+
 
 ##  Getting Started
 
@@ -33,7 +33,7 @@ flutter run
 
 > Make sure the Django backend is running at `http://127.0.0.1:8000/` before launching the app.
 
----
+
 
 ##  Where I Struggled
 - Managing JWT tokens and handling token refresh on the client side
