@@ -6,7 +6,20 @@ import 'package:notes_app/services/api_services.dart';
 class AuthNotifier extends Notifier<AuthState> {
   @override
   AuthState build() {
+    _init();
     return AuthState.initial();
+  }
+
+  Future<void> _init() async {
+    await Future.delayed(Duration.zero);
+    final apiService = ref.read(apiServiceProvider);
+    final hasToken = await apiService.hasToken();
+
+    if (hasToken) {
+      state = AuthState.authenticated();
+    } else {
+      state = AuthState.unauthenticated();
+    }
   }
 
   //login action

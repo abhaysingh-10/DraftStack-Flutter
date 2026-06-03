@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:notes_app/providers/auth_provider.dart';
 import '../services/api_services.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -54,23 +55,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () async {
-                  final success = await ref.read(apiServiceProvider).login(
+                onPressed: () {
+                  ref.read(authProvider.notifier).login(
                         _usernameController.text,
                         _passwordController.text,
                       );
-
-                  if (!mounted) return; //dont use context
-
-                  if (success) {
-                    Navigator.pushReplacementNamed(context, '/notes');
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Invalid username or password"),
-                      ),
-                    );
-                  }
                 },
                 child: Text("Login"),
               ),
