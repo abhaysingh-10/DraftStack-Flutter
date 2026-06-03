@@ -2,7 +2,6 @@
 
 The mobile client for the Notes App, built with Flutter. Connects to the Django DRF backend for a full-stack note-taking experience.
 
----
 
 ##  What I Built
 A clean, responsive mobile app where users can:
