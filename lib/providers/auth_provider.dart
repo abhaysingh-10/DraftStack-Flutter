@@ -3,39 +3,40 @@ import 'package:notes_app/services/api_services.dart';
 
 // 1. The Notifier Provider
 
-class AuthNotifier extends Notifier<AuthState>{
-
+class AuthNotifier extends Notifier<AuthState> {
   @override
-  AuthState build(){
+  AuthState build() {
     return AuthState.initial();
   }
 
- //login action
+  //login action
 
- Future<void> login(String username,String password) async{
-  state = AuthState.loading();
+  Future<void> login(String username, String password) async {
+    state = AuthState.loading();
 
-  final apiService = ref.watch(apiServiceProvider);
-  final success = await apiService.login(username, password);
+    final apiService = ref.read(apiServiceProvider);
+    final success = await apiService.login(username, password);
 
-  if(success){
-    state = AuthState.authenticated();
-  }else{
-    state = AuthState.error("Invalid Username and Password");
+    if (success) {
+      state = AuthState.authenticated();
+    } else {
+      state = AuthState.error("Invalid Username and Password");
+    }
   }
- }
 
 // logout  action
 
-Future<void> logout() async{
-  await ref.read(apiServiceProvider).logout();
-  state = AuthState.unauthenticated();
+  Future<void> logout() async {
+    await ref.read(apiServiceProvider).logout();
+    state = AuthState.unauthenticated();
+  }
 }
-}
 
+// the global access provider
 
-
-
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
+  return AuthNotifier();
+});
 
 enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
