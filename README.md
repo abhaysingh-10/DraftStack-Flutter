@@ -40,7 +40,7 @@ flutter run
 - Syncing state across screens after create/edit/delete actions
 - Understanding how to structure API calls cleanly in Flutter
 
----
+
 
 ##  What I Learned
 - How to consume a REST API from a Flutter app
@@ -48,6 +48,6 @@ flutter run
 - State management and navigation between screens
 - Connecting a Flutter frontend to a Django backend end-to-end
 
----
+
 
 Built by **Abhay Singh**
