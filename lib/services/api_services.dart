@@ -68,15 +68,15 @@ class ApiServices {
                 error.requestOptions.headers['Authorization'] =
                     'Bearer $newToken';
                 final retryResponse = await _dio.fetch(error.requestOptions);
-                handler.resolve(retryResponse);
+                return handler.resolve(retryResponse);
               } catch (e) {
                 await _storage.deleteAll();
-                handler.reject(error);
               }
             }
-          } else {
-            handler.next(error);
           }
+          // If we reach here, either it wasn't a 401 or refresh failed
+          // We MUST call next(error) to let the login() function see the failure
+          return handler.next(error);
         },
       ),
     );

@@ -51,13 +51,12 @@ class MyApp extends ConsumerWidget {
 
   // helper function
   Widget _getHome(AuthStatus status) {
-    switch (status) {
-      case AuthStatus.authenticated:
-        return const NoteScreen();
-      case AuthStatus.loading:
-        return Scaffold(body: Center(child: CircularProgressIndicator()));
-      default:
-        return LoginScreen();
+    if (status == AuthStatus.authenticated) {
+      return NoteScreen();
     }
+    if (status == AuthStatus.initial) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    return LoginScreen();
   }
 }

@@ -25,15 +25,19 @@ class AuthNotifier extends Notifier<AuthState> {
   //login action
 
   Future<void> login(String username, String password) async {
-    state = AuthState.loading();
+    try {
+      state = AuthState.loading();
 
-    final apiService = ref.read(apiServiceProvider);
-    final success = await apiService.login(username, password);
+      final apiService = ref.read(apiServiceProvider);
+      final success = await apiService.login(username, password);
 
-    if (success) {
-      state = AuthState.authenticated();
-    } else {
-      state = AuthState.error("Invalid Username and Password");
+      if (success) {
+        state = AuthState.authenticated();
+      } else {
+        state = AuthState.error("Invalid Username and Password");
+      }
+    } catch (e) {
+      state = AuthState.error("Connection failed. Please try again.");
     }
   }
 
