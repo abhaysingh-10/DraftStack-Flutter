@@ -4,6 +4,7 @@ import 'package:notes_app/models/note_model.dart';
 import 'package:notes_app/screens/note_detail_screen.dart';
 import 'package:notes_app/services/api_services.dart';
 import 'package:notes_app/screens/note_form_screen.dart';
+import 'package:notes_app/providers/notes_provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:notes_app/main.dart';
 import 'dart:async';
@@ -18,7 +19,7 @@ class NoteScreen extends ConsumerStatefulWidget {
 class _NoteScreenState extends ConsumerState<NoteScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
-  String _sortBy = "date"; // Added this back
+  String _sortBy = "date";
   Timer? _debounce;
 
   Widget _buildEmptyState() {
@@ -44,7 +45,7 @@ class _NoteScreenState extends ConsumerState<NoteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final notesAsync = ref.watch(notesProvider);
+    final notesAsync = ref.watch(notesListProvider);
     final currentTheme = ref.watch(themeProvider);
 
     return Scaffold(
@@ -82,14 +83,8 @@ class _NoteScreenState extends ConsumerState<NoteScreen> {
               });
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: "date",
-                child: Text("Newest First"),
-              ),
-              const PopupMenuItem(
-                value: "alphabetical",
-                child: Text("Alphabatical (A-Z)"),
-              ),
+              const PopupMenuItem(value: "date", child: Text("Newest First")),
+              const PopupMenuItem(value: "alphabetical", child: Text("Alphabetical (A-Z)")),
             ],
           ),
           IconButton(
@@ -111,12 +106,9 @@ class _NoteScreenState extends ConsumerState<NoteScreen> {
         ],
       ),
       body: notesAsync.when(
-        data: (data) {
-          if (data == null || data['results'] == null) return _buildEmptyState();
-          final List rawNotes = data['results'];
-          List<Note> notes = rawNotes.map((json) => Note.fromJson(json)).toList();
+        data: (notesList) {
+          List<Note> notes = List.from(notesList);
 
-          // Apply Sorting Logic
           if (_sortBy == "alphabetical") {
             notes.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
           } else {
@@ -125,13 +117,25 @@ class _NoteScreenState extends ConsumerState<NoteScreen> {
 
           if (notes.isEmpty) return _buildEmptyState();
 
+          final hasNextPage = ref.watch(notesListProvider.notifier).hasNextPage;
+
           return RefreshIndicator(
-            onRefresh: () => ref.refresh(notesProvider.future),
+            onRefresh: () async => ref.read(notesListProvider.notifier).refresh(),
             child: SlidableAutoCloseBehavior(
               closeWhenOpened: true,
               child: ListView.builder(
-                itemCount: notes.length,
+                itemCount: hasNextPage ? notes.length + 1 : notes.length,
                 itemBuilder: (context, index) {
+                  if (index == notes.length) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton(
+                        onPressed: () => ref.read(notesListProvider.notifier).loadMore(),
+                        child: const Text("Load More"),
+                      ),
+                    );
+                  }
+
                   final note = notes[index];
                   final isDone = note.subtasks.isNotEmpty && note.subtasks.every((s) => s.completed);
 
@@ -147,7 +151,7 @@ class _NoteScreenState extends ConsumerState<NoteScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => NoteFormScreen(note: note)),
-                              ).then((_) => ref.refresh(notesProvider.future));
+                              ).then((_) => ref.read(notesListProvider.notifier).refresh());
                             },
                             backgroundColor: Colors.blue,
                             icon: Icons.edit,
@@ -179,7 +183,7 @@ class _NoteScreenState extends ConsumerState<NoteScreen> {
                               );
                               if (confirm == true) {
                                 final success = await ref.read(apiServiceProvider).deleteNote(note.id);
-                                if (success) ref.refresh(notesProvider.future);
+                                if (success) ref.read(notesListProvider.notifier).refresh();
                               }
                             },
                             backgroundColor: Colors.red,
@@ -194,7 +198,7 @@ class _NoteScreenState extends ConsumerState<NoteScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => NoteDetailScreen(note: note)),
-                            ).then((_) => ref.refresh(notesProvider.future));
+                            ).then((_) => ref.read(notesListProvider.notifier).refresh());
                           },
                           title: Text(note.title, style: const TextStyle(fontWeight: FontWeight.bold)),
                           subtitle: Text(note.content, maxLines: 2, overflow: TextOverflow.ellipsis),
